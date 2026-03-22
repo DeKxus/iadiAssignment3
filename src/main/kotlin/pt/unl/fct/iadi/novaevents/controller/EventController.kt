@@ -65,9 +65,15 @@ class EventController(
             description = eventForm.description
         )
 
-        val created = eventService.create(event)
-
-        return "redirect:/clubs/$clubId/events/${created.id}"
+        return try {
+            val created = eventService.create(event)
+            "redirect:/clubs/$clubId/events/${created.id}"
+        } catch (e: IllegalArgumentException) {
+            model.addAttribute("errorMessage", e.message)
+            model.addAttribute("clubId", clubId)
+            model.addAttribute("eventForm", eventForm)
+            "events/form"
+        }
     }
 
 

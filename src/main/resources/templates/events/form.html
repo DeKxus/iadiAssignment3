@@ -49,6 +49,11 @@
 
             <button type="submit" class="btn btn-success">Create</button>
         </form>
+
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
     </div>
 
     <!-- EDIT FORM -->
