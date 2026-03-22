@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="util/head :: head"></head>
+<body>
+
+<div th:replace="util/navbar :: navbar"></div>
+
+<div class="container mt-4">
+    <h1>Clubs</h1>
+
+    <table class="table">
+        <tbody>
+        <tr th:each="club : ${clubs}">
+            <td>
+                <a th:href="@{/clubs/{id}(id=${club.id})}" th:text="${club.name}"></a>
+
+                <details>
+                    <summary>Description</summary>
+                    <p th:text="${club.description}"></p>
+                </details>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
