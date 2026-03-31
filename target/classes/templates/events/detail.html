@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="util/head :: head"></head>
+<body>
+
+<div th:replace="util/navbar :: navbar"></div>
+
+<div class="container mt-4">
+    <h1 th:text="${event.name}"></h1>
+
+    <p><strong>Date:</strong> <span th:text="${event.date}"></span></p>
+    <p><strong>Location:</strong> <span th:text="${event.location}"></span></p>
+    <p><strong>Type:</strong> <span th:text="${event.type}"></span></p>
+    <p><strong>Description:</strong> <span th:text="${event.description}"></span></p>
+    <p><strong>Club:</strong> <span th:text="${club.name}"></span></p>
+
+    <a th:href="@{/clubs/{c}/events/{e}/edit(c=${club.id}, e=${event.id})}">Edit</a>
+    <a th:href="@{/clubs/{c}/events/{e}/delete(c=${club.id}, e=${event.id})}">Delete</a>
+</div>
+
+</body>
+</html>

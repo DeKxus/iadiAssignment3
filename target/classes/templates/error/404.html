@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="util/head :: head"></head>
+<body>
+
+<div th:replace="util/navbar :: navbar"></div>
+
+<div class="container mt-4">
+    <h1>404 - Not Found</h1>
+    <p th:text="${message}"></p>
+    <p th:text="${stackTrace}"></p>
+</div>
+</body>
+</html>

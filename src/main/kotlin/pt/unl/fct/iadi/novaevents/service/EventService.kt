@@ -1,71 +1,24 @@
 package pt.unl.fct.iadi.novaevents.service
 
 import pt.unl.fct.iadi.novaevents.model.Event
-import pt.unl.fct.iadi.novaevents.model.EventType
 import org.springframework.stereotype.Service
-import java.time.LocalDate
+import pt.unl.fct.iadi.novaevents.repository.EventRepository
+
 
 @Service
-class EventService {
+class EventService( val eventRepository: EventRepository) {
 
-    private val events = mutableListOf<Event>()
-    private var nextId = 3L
-
-    init {
-        // Required seeded events
-        events.add(
-            Event(
-                1,
-                1,
-                "Beginner's Chess Workshop",
-                LocalDate.now().plusDays(5),
-                "Room A",
-                EventType.WORKSHOP,
-                "Learn the basics of chess."
-            )
-        )
-
-        events.add(
-            Event(
-                2,
-                1,
-                "Spring Chess Tournament",
-                LocalDate.now().plusDays(10),
-                "Main Hall",
-                EventType.COMPETITION,
-                "Compete with other players."
-            )
-        )
-
-        // Add at least one event per club
-        events.add(
-            Event(
-                3,
-                2,
-                "Robotics Intro Session",
-                LocalDate.now().plusDays(7),
-                null,
-                EventType.MEETING,
-                null
-            )
-        )
-    }
-
-    fun findAll(): List<Event> = events
+    fun findAll(): List<Event> = eventRepository.findAll()
 
     fun findById(id: Long): Event =
-        events.find { it.id == id }
-            ?: throw NoSuchElementException("Event not found")
+        eventRepository.findById(id).orElseThrow{ NoSuchElementException("Event not found") }
 
     fun findByClubId(clubId: Long): List<Event> =
-        events.filter { it.clubId == clubId }
+        eventRepository.findByClubId(clubId)
 
     fun create(event: Event): Event {
         validateUniqueName(event.name, null)
-
-        val newEvent = event.copy(id = nextId++)
-        events.add(newEvent)
-        return newEvent
+        return eventRepository.save(event)
     }
 
     fun update(id: Long, updated: Event): Event {
@@ -79,21 +32,23 @@ class EventService {
         existing.type = updated.type
         existing.description = updated.description
 
-        return existing
+        return eventRepository.save(existing)
     }
 
     fun delete(id: Long) {
         val event = findById(id)
-        events.remove(event)
+        eventRepository.delete(event)
     }
 
     private fun validateUniqueName(name: String, currentId: Long?) {
-        val exists = events.any {
-            it.name.equals(name, ignoreCase = true) &&
-                    it.id != currentId
+
+        val exists = if (currentId != null) {
+            eventRepository.existsByNameIgnoreCaseAndIdNot(name, currentId)
+        } else{
+            eventRepository.existsByNameIgnoreCase(name)
         }
 
-        if (exists) {
+        if(exists){
             throw IllegalArgumentException("An event with this name already exists")
         }
     }

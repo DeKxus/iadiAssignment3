@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import pt.unl.fct.iadi.novaevents.service.EventTypeService
 
 
 @Controller
 class EventController(
     private val eventService: EventService,
     private val clubService: ClubService,
+    private val eventTypeService: EventTypeService,
 ) {
 
     @GetMapping("/events")
@@ -39,6 +41,7 @@ class EventController(
     fun createEventForm(@PathVariable clubId: Long, model: Model): String {
         model.addAttribute("eventForm", EventForm())
         model.addAttribute("clubId", clubId)
+        model.addAttribute("eventTypes", eventTypeService.findAll())
         return "events/form"
     }
 
@@ -52,16 +55,19 @@ class EventController(
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("clubId", clubId)
+            model.addAttribute("eventTypes", eventTypeService.findAll())
             return "events/form"
         }
 
+        val club = clubService.findById(clubId)
+
         val event = Event(
             id = 0,
-            clubId = clubId,
+            club = club,
             name = eventForm.name!!,
             date = eventForm.date!!,
             location = eventForm.location,
-            type = eventForm.type!!,
+            type = eventTypeService.findById(eventForm.type!!),
             description = eventForm.description
         )
 
@@ -89,13 +95,14 @@ class EventController(
             name = event.name,
             date = event.date,
             location = event.location,
-            type = event.type,
+            type = event.type?.id,
             description = event.description
         )
 
         model.addAttribute("eventForm", form)
         model.addAttribute("clubId", clubId)
         model.addAttribute("eventId", eventId)
+        model.addAttribute("eventTypes", eventTypeService.findAll())
 
         return "events/form"
     }
@@ -112,16 +119,19 @@ class EventController(
         if (bindingResult.hasErrors()) {
             model.addAttribute("clubId", clubId)
             model.addAttribute("eventId", eventId)
+            model.addAttribute("eventTypes", eventTypeService.findAll())
             return "events/form"
         }
 
+        val club = clubService.findById(clubId)
+
         val updated = Event(
             id = eventId,
-            clubId = clubId,
+            club = club,
             name = eventForm.name!!,
             date = eventForm.date!!,
             location = eventForm.location,
-            type = eventForm.type!!,
+            type = eventTypeService.findById(eventForm.type!!),
             description = eventForm.description
         )
 

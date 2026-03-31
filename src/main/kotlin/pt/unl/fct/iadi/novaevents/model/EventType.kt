@@ -1,5 +1,15 @@
 package pt.unl.fct.iadi.novaevents.model
 
-enum class EventType {
-    WORKSHOP, TALK, COMPETITION, SOCIAL, MEETING, OTHER
-}
+import jakarta.persistence.*
+
+@Entity
+@Table(name = "event_types")
+open class EventType(
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0,
+
+    @Column(unique = true)
+    var name: String = ""
+)

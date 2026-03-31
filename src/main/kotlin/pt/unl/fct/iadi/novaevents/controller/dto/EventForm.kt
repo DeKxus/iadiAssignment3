@@ -15,8 +15,9 @@ data class EventForm(
 
     var location: String? = null,
 
+    //the type now becomes an id so it can be accessed through the eventtypeservice
     @field:NotNull(message = "Event type is required")
-    var type: EventType? = null,
+    var type: Long? = null,
 
     var description: String? = null,
 
